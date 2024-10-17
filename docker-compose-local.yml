@@ -1,0 +1,101 @@
+services:
+  rest-api:
+    build:
+      context: ../task-manager
+    container_name: rest-api
+    environment:
+      - SPRING_PROFILES_ACTIVE=prod
+      - POSTGRES_PASSWORD=password
+      - POSTGRES_USERNAME=username
+      - POSTGRES_DB=database-dev
+      - POSTGRES_HOST=postgres
+      - POSTGRES_PORT=5432
+      - KAFKA_HOST=kafka
+      - KAFKA_PORT=9092
+      - ALLOWED_ORIGINS=http://localhost
+      - JWT_SECRET=7469cde1eefe88cd9732adb7680bdea0dbee84904df49f31308fc9481a5e85553db13ae6ce9bc2f5ce59451fc70d6b1705d35851cd5b6fb94ca974f2d01073e6419dee7ca44914069bf9a0aa303b2a7da359c100de96b9cf5c3b9810ded33d09cca4170b54aba7f09bfe500aa7ccb143f2806b373c0dbd62cf2760a76fb91d3233f3a7242cf07e5093c6aba79e3587790f72b2cdadaec42e9a56b131ead654d1366d848004f20890830cbdd2d4b780c61e83b19833c293af0cc47b5ac77812a30be28c452b8f0239c0f2216de5817bab5342a7c7cf2fefe4f465d53a7874cd6932a73d8f322169b70c852babf6c75131af669f31ae14b2c8c2131f5762b4c48b
+      - ACCESS_TOKEN_EXP=90000
+      - REFRESH_TOKEN_EXP=900000
+    ports:
+      - "8080:8080"
+    depends_on:
+      - postgres
+      - zookeeper
+      - kafka
+
+  email-sender:
+    build:
+      context: ../email-sender
+    container_name: email-sender
+    environment:
+      - SPRING_PROFILES_ACTIVE=prod
+      - KAFKA_HOST=kafka
+      - KAFKA_PORT=9092
+      - MAIL_USERNAME=72e8b67a765e3ed74c738bfae8b8bab7
+      - MAIL_PASSWORD=c8acc78baf9c704cc39b049f8df70999
+    ports:
+      - "8081:8081"
+    depends_on:
+      - zookeeper
+      - kafka
+
+  scheduler:
+    build:
+      context: ../scheduler
+    container_name: scheduler
+    environment:
+      - SPRING_PROFILES_ACTIVE=prod
+      - POSTGRES_PASSWORD=password
+      - POSTGRES_USERNAME=username
+      - POSTGRES_DB=database-dev
+      - POSTGRES_HOST=postgres
+      - POSTGRES_PORT=5432
+    ports:
+      - "8082:8082"
+    depends_on:
+      - postgres
+      - zookeeper
+      - kafka
+
+  web-ui:
+    build:
+      context: ../web-ui
+      args:
+        VITE_APP_BASE_URL: http://localhost:8080/api/v1
+    container_name: web-ui
+    ports:
+      - "80:80"
+
+  postgres:
+    image: postgres:14-alpine
+    container_name: postgres
+    environment:
+      POSTGRES_DB: database-dev
+      POSTGRES_USER: username
+      POSTGRES_PASSWORD: password
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  zookeeper:
+    image: confluentinc/cp-zookeeper:7.7.1
+    ports:
+      - "2181:2181"
+    environment:
+      ZOOKEEPER_CLIENT_PORT: 2181
+
+  kafka:
+    image: confluentinc/cp-kafka:7.7.1
+    ports:
+      - "9092:9092"
+    environment:
+      KAFKA_BROKER_ID: 1
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+
+volumes:
+  postgres_data:
