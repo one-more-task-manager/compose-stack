@@ -1,18 +1,20 @@
 services:
   rest-api:
-    build:
-      context: ../rest-api
+    image: danyalegendary/rest-api:latest
     container_name: rest-api
     environment:
       - SPRING_PROFILES_ACTIVE=prod
-      - POSTGRES_PASSWORD=password
-      - POSTGRES_USERNAME=username
-      - KAFKA_HOST=kafka
-      - KAFKA_PORT=9092
-      - ALLOWED_ORIGINS=http://localhost
-      - JWT_SECRET=7469cde1eefe88cd9732adb7680bdea0dbee84904df49f31308fc9481a5e85553db13ae6ce9bc2f5ce59451fc70d6b1705d35851cd5b6fb94ca974f2d01073e6419dee7ca44914069bf9a0aa303b2a7da359c100de96b9cf5c3b9810ded33d09cca4170b54aba7f09bfe500aa7ccb143f2806b373c0dbd62cf2760a76fb91d3233f3a7242cf07e5093c6aba79e3587790f72b2cdadaec42e9a56b131ead654d1366d848004f20890830cbdd2d4b780c61e83b19833c293af0cc47b5ac77812a30be28c452b8f0239c0f2216de5817bab5342a7c7cf2fefe4f465d53a7874cd6932a73d8f322169b70c852babf6c75131af669f31ae14b2c8c2131f5762b4c48b
-      - ACCESS_TOKEN_EXP=10000
-      - REFRESH_TOKEN_EXP=900000
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+      - POSTGRES_USERNAME=${POSTGRES_USERNAME}
+      - POSTGRES_DB=${POSTGRES_DB}
+      - POSTGRES_HOST=${POSTGRES_HOST}
+      - POSTGRES_PORT=${POSTGRES_PORT}
+      - KAFKA_HOST=${KAFKA_HOST}
+      - KAFKA_PORT=${KAFKA_PORT}
+      - ALLOWED_ORIGINS=${ALLOWED_ORIGINS}
+      - JWT_SECRET=${JWT_SECRET}
+      - ACCESS_TOKEN_EXP=${ACCESS_TOKEN_EXP}
+      - REFRESH_TOKEN_EXP=${REFRESH_TOKEN_EXP}
     ports:
       - "8080:8080"
     depends_on:
@@ -21,15 +23,14 @@ services:
       - kafka
 
   email-sender:
-    build:
-      context: ../email-sender
+    image: danyalegendary/email-sender:latest
     container_name: email-sender
     environment:
       - SPRING_PROFILES_ACTIVE=prod
       - KAFKA_HOST=kafka
       - KAFKA_PORT=9092
-      - MAIL_USERNAME=72e8b67a765e3ed74c738bfae8b8bab7
-      - MAIL_PASSWORD=c8acc78baf9c704cc39b049f8df70999
+      - MAIL_USERNAME=${MAIL_USERNAME}
+      - MAIL_PASSWORD=${MAIL_PASSWORD}
     ports:
       - "8081:8081"
     depends_on:
@@ -37,13 +38,15 @@ services:
       - kafka
 
   scheduler:
-    build:
-      context: ../scheduler
+    image: danyalegendary/scheduler:latest
     container_name: scheduler
     environment:
       - SPRING_PROFILES_ACTIVE=prod
       - POSTGRES_PASSWORD=password
       - POSTGRES_USERNAME=username
+      - POSTGRES_DB=database-dev
+      - POSTGRES_HOST=postgres
+      - POSTGRES_PORT=5432
     ports:
       - "8082:8082"
     depends_on:
@@ -52,10 +55,7 @@ services:
       - kafka
 
   web-ui:
-    build:
-      context: ../web-ui
-      args:
-        VITE_APP_BASE_URL: http://localhost:8080/api/v1
+    image: danyalegendary/web-ui:latest
     container_name: web-ui
     ports:
       - "80:80"
