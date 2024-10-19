@@ -5,7 +5,7 @@ on:
 
 jobs:
   deploy:
-    runs-on: [self-hosted, Linux]
+    runs-on: [hetzner]
     steps:
       - name: checkout repo
         uses: actions/checkout@v3
