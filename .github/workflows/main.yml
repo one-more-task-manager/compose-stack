@@ -27,7 +27,7 @@ jobs:
           sort_keys: false
 
       - name: Pull images
-        run: sudo docker-compose -f docker-compose-prod.yml pull
+        run: docker-compose -f docker-compose-prod.yml pull
 
       - name: Restart containers
-        run: sudo docker-compose -f docker-compose-prod.yml up -d
+        run: docker-compose -f docker-compose-prod.yml up -d
