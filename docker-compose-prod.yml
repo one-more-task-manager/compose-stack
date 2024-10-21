@@ -55,7 +55,10 @@ services:
       - kafka
 
   web-ui:
-    image: danyalegendary/web-ui:latest
+    build:
+      context: ../web-ui
+      args:
+        - VITE_APP_BASE_URL=${VITE_APP_BASE_URL}
     container_name: web-ui
     ports:
       - "80:80"
@@ -64,7 +67,7 @@ services:
     image: postgres:14-alpine
     container_name: postgres
     environment:
-      POSTGRES_DB: database-dev
+      POSTGRES_DB: one-more-task-manager
       POSTGRES_USER: username
       POSTGRES_PASSWORD: password
     ports:

@@ -14,7 +14,7 @@ jobs:
         uses: SpicyPizza/create-envfile@v2.0
         with:
           envkey_POSTGRES_PASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
-          envkey_POSTGRES_USERNAME: ${{ secrets.POSTGRES_USERNAME }}
+          envkey_POSTGRES_USER: ${{ secrets.POSTGRES_USER }}
           envkey_ALLOWED_ORIGINS: ${{ secrets.ALLOWED_ORIGINS }}
           envkey_JWT_SECRET: ${{ secrets.JWT_SECRET }}
           envkey_ACCESS_TOKEN_EXP: ${{ secrets.ACCESS_TOKEN_EXP }}
