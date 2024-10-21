@@ -15,6 +15,7 @@ jobs:
         with:
           envkey_POSTGRES_PASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
           envkey_POSTGRES_USER: ${{ secrets.POSTGRES_USER }}
+          envkey_POSTGRES_DB: ${{ secrets.POSTGRES_DB }}
           envkey_ALLOWED_ORIGINS: ${{ secrets.ALLOWED_ORIGINS }}
           envkey_JWT_SECRET: ${{ secrets.JWT_SECRET }}
           envkey_ACCESS_TOKEN_EXP: ${{ secrets.ACCESS_TOKEN_EXP }}
