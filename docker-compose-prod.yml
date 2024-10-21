@@ -5,12 +5,7 @@ services:
     environment:
       - SPRING_PROFILES_ACTIVE=prod
       - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
-      - POSTGRES_USERNAME=${POSTGRES_USERNAME}
-      - POSTGRES_DB=${POSTGRES_DB}
-      - POSTGRES_HOST=${POSTGRES_HOST}
-      - POSTGRES_PORT=${POSTGRES_PORT}
-      - KAFKA_HOST=${KAFKA_HOST}
-      - KAFKA_PORT=${KAFKA_PORT}
+      - POSTGRES_USER=${POSTGRES_USER}
       - ALLOWED_ORIGINS=${ALLOWED_ORIGINS}
       - JWT_SECRET=${JWT_SECRET}
       - ACCESS_TOKEN_EXP=${ACCESS_TOKEN_EXP}
@@ -42,11 +37,8 @@ services:
     container_name: scheduler
     environment:
       - SPRING_PROFILES_ACTIVE=prod
-      - POSTGRES_PASSWORD=password
-      - POSTGRES_USERNAME=username
-      - POSTGRES_DB=database-dev
-      - POSTGRES_HOST=postgres
-      - POSTGRES_PORT=5432
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+      - POSTGRES_USER=${POSTGRES_USER}
     ports:
       - "8082:8082"
     depends_on:
@@ -55,21 +47,20 @@ services:
       - kafka
 
   web-ui:
-    build:
-      context: ../web-ui
-      args:
-        - VITE_APP_BASE_URL=${VITE_APP_BASE_URL}
+    image: danyalegendary/web-ui:latest
     container_name: web-ui
     ports:
       - "80:80"
+    depends_on:
+      - rest-api
 
   postgres:
     image: postgres:14-alpine
     container_name: postgres
     environment:
-      POSTGRES_DB: one-more-task-manager
-      POSTGRES_USER: username
-      POSTGRES_PASSWORD: password
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
     ports:
       - "5432:5432"
     volumes:

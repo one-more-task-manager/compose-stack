@@ -1,5 +1,3 @@
-version: '3.8'
-
 services:
   rest-api:
     build:
@@ -53,7 +51,7 @@ services:
     build:
       context: ../web-ui
       args:
-        - VITE_APP_BASE_URL=http://localhost:8080/api/v1
+        VITE_APP_BASE_URL: http://localhost:8080/api/v1
     container_name: web-ui
     ports:
       - "80:80"
